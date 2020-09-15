@@ -4,6 +4,11 @@ const jogo = document.getElementById("jogo");
 // Esta é a referência que o jogo usará para criar a área de quadros. A área total será o quadrado do valor abaixo
 const referenciaBaseAltura = 15;
 
+// Definindo a largura do game
+jogo.style.width = referenciaBaseAltura * 50 + "px";
+jogo.style.borderStyle = "solid";
+jogo.style.margin = "auto";
+
 // Quando uma tecla for pressionada para mudar a direção da cobra, a função mudaDirecao será disparada
 const body = document.getElementsByTagName("body")[0];
 body.addEventListener("keydown", (tecla) => mudaDirecao(tecla.key));
@@ -14,19 +19,17 @@ let tempoMovimento = 1000;
 // Este sera o vetor que guardará os quadros que aparecerão na tela
 let area = [];
 
-// Aqui o loop monta o objeto de quadros
-for (let x = 0; x < referenciaBaseAltura; x++) {
-    area.push([]);
-    for (let y = 0; y < referenciaBaseAltura; y++) {
-        area[x].push({preenchido: false});
-    }
-}
+// Esta constante é apenas para gerar uma direção inicial aleatória
+const direcoes = ["up", "down", "left", "right"];
 
 // A cobra é representada logicamente por este objeto
 let snake = {
-    direcao: "left",
+    direcao: direcoes[Math.floor(Math.random() * 4)],
     coordenadas: {idxLinha: 5, idxColuna: 8}
 }
+
+// Aqui o loop monta o objeto de quadros
+refresh()
 
 // A cobra se locomove com base nesta lógica
 let gameRunning = setInterval(() => {
@@ -50,14 +53,7 @@ let gameRunning = setInterval(() => {
         default: break;
     }
 
-    area = area.map((linha, idxLinha) => {
-        return linha.map((coluna, idxColuna) => {
-            return {
-                ...coluna,
-                preenchido: idxLinha === snake.coordenadas.idxLinha && idxColuna === snake.coordenadas.idxColuna ? true : false
-            }
-        })
-    })
+    refresh();
 }, tempoMovimento);
 
 // Caso o game termine
@@ -95,5 +91,37 @@ function mudaDirecao(direcao) {
 
             default: break;
         }
+    }
+}
+
+function refresh() {
+    area = [];
+    jogo.innerHTML = "";
+
+    // Aqui o loop monta o objeto de quadros
+    for (let x = 0; x < referenciaBaseAltura; x++) {
+        area.push([]);
+
+        const novaLinha = document.createElement("div");
+        novaLinha.setAttribute("id", `div-linha-${x}`);
+        novaLinha.style.display = "flex";
+
+        for (let y = 0; y < referenciaBaseAltura; y++) {
+            area[x].push(
+                {preenchido: snake.coordenadas.idxLinha === x && snake.coordenadas.idxColuna === y ? true : false}
+            );
+            
+            const novaColuna = document.createElement("div");
+            novaColuna.setAttribute("id", `div-${x}-${y}`);
+            novaColuna.style.width = "50px";
+            novaColuna.style.height = "50px";
+            novaColuna.style.lineHeight = "50px";
+            novaColuna.style.textAlign = "center";
+            novaColuna.style.backgroundColor = snake.coordenadas.idxLinha === x && snake.coordenadas.idxColuna === y ? "black" : "white";
+
+            novaLinha.appendChild(novaColuna);
+        }
+
+        jogo.appendChild(novaLinha);
     }
 }
