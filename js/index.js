@@ -25,7 +25,7 @@ const direcoes = ["up", "down", "left", "right"];
 // A cobra é representada logicamente por este objeto
 let snake = {
     direcao: direcoes[Math.floor(Math.random() * 4)],
-    coordenadas: {idxLinha: 5, idxColuna: 8}
+    coordenadas: [{idxLinha: 5, idxColuna: 8}]
 }
 
 // Define o local da comida
@@ -38,23 +38,33 @@ refresh();
 let gameRunning = setInterval(() => {
     switch (snake.direcao) {
         case "up":
-            snake.coordenadas.idxLinha === 0 ? snake.coordenadas.idxLinha = referenciaBaseAltura - 1 : snake.coordenadas.idxLinha--;
+            snake.coordenadas[0].idxLinha === 0 ? snake.coordenadas[0].idxLinha = referenciaBaseAltura - 1 : snake.coordenadas[0].idxLinha--;
             break;
 
         case "down":
-            snake.coordenadas.idxLinha === referenciaBaseAltura - 1 ? snake.coordenadas.idxLinha = 0 : snake.coordenadas.idxLinha++;
+            snake.coordenadas[0].idxLinha === referenciaBaseAltura - 1 ? snake.coordenadas[0].idxLinha = 0 : snake.coordenadas[0].idxLinha++;
             break;
 
         case "left":
-            snake.coordenadas.idxColuna === 0 ? snake.coordenadas.idxColuna = referenciaBaseAltura - 1 : snake.coordenadas.idxColuna--;
+            snake.coordenadas[0].idxColuna === 0 ? snake.coordenadas[0].idxColuna = referenciaBaseAltura - 1 : snake.coordenadas[0].idxColuna--;
             break;
 
         case "right":
-            snake.coordenadas.idxColuna === referenciaBaseAltura - 1 ? snake.coordenadas.idxColuna = 0 : snake.coordenadas.idxColuna++;
+            snake.coordenadas[0].idxColuna === referenciaBaseAltura - 1 ? snake.coordenadas[0].idxColuna = 0 : snake.coordenadas[0].idxColuna++;
             break;
 
         default: break;
     }
+
+
+    // Esta constante vai guardar o dado se a cobra comeu a comida
+    const comeu = snake.coordenadas[0].idxLinha === comida.idxLinha && snake.coordenadas[0].idxColuna === comida.idxColuna ? true : false;
+
+    // Se comeu, então tem que adicionar mais uma instância de coordenadas para a comida
+    if (comeu) {
+        snake.coordenadas.push(snake.coordenadas[snake.coordenadas.length - 1])
+        comida = posicionaComida();
+    };
 
     refresh();
 }, tempoMovimento);
@@ -111,9 +121,9 @@ function refresh() {
         for (let y = 0; y < referenciaBaseAltura; y++) {
             let preenchimento;
 
-            if (x === comida.linha && y === comida.coluna) {
+            if (x === comida.idxLinha && y === comida.idxColuna) {
                 preenchimento = "comida";
-            } else if (snake.coordenadas.idxLinha === x && snake.coordenadas.idxColuna === y) {
+            } else if (snake.coordenadas[0].idxLinha === x && snake.coordenadas[0].idxColuna === y) {
                 preenchimento = true;
             } else {
                 preenchimento = false;
@@ -137,5 +147,19 @@ function refresh() {
 }
 
 function posicionaComida() {
-    return {linha: Math.floor(Math.random() * referenciaBaseAltura), coluna: Math.floor(Math.random() * referenciaBaseAltura)};
+    // A comida não pode ser posicionada em nenhum local onde a cobra e sua cauda estejam posicionadas
+    let novaPosicao = {idxLinha: null, idxColuna: null}
+    let isPreenchido = false;
+
+    do {
+        novaPosicao = {idxLinha: Math.floor(Math.random() * referenciaBaseAltura), idxColuna: Math.floor(Math.random() * referenciaBaseAltura)};
+
+        isPreenchido = snake.coordenadas.some(coordenada => {
+            coordenada.idxLinha === novaPosicao.idxLinha && coordenada.idxColuna === novaPosicao.idxColuna
+        });
+    }
+    
+    while (isPreenchido);
+
+    return novaPosicao;
 }
