@@ -28,8 +28,11 @@ let snake = {
     coordenadas: {idxLinha: 5, idxColuna: 8}
 }
 
+// Define o local da comida
+let comida = posicionaComida();
+
 // Aqui o loop monta o objeto de quadros
-refresh()
+refresh();
 
 // A cobra se locomove com base nesta lógica
 let gameRunning = setInterval(() => {
@@ -63,7 +66,6 @@ function gameOver() {
 
 // Esta função muda a direção da cobra
 function mudaDirecao(direcao) {
-
     const condicionais = [
         direcao === "ArrowUp",
         direcao === "ArrowDown",
@@ -107,9 +109,17 @@ function refresh() {
         novaLinha.style.display = "flex";
 
         for (let y = 0; y < referenciaBaseAltura; y++) {
-            area[x].push(
-                {preenchido: snake.coordenadas.idxLinha === x && snake.coordenadas.idxColuna === y ? true : false}
-            );
+            let preenchimento;
+
+            if (x === comida.linha && y === comida.coluna) {
+                preenchimento = "comida";
+            } else if (snake.coordenadas.idxLinha === x && snake.coordenadas.idxColuna === y) {
+                preenchimento = true;
+            } else {
+                preenchimento = false;
+            }
+
+            area[x].push(preenchimento);
             
             const novaColuna = document.createElement("div");
             novaColuna.setAttribute("id", `div-${x}-${y}`);
@@ -117,11 +127,15 @@ function refresh() {
             novaColuna.style.height = "50px";
             novaColuna.style.lineHeight = "50px";
             novaColuna.style.textAlign = "center";
-            novaColuna.style.backgroundColor = snake.coordenadas.idxLinha === x && snake.coordenadas.idxColuna === y ? "black" : "white";
+            novaColuna.style.backgroundColor = preenchimento === "comida" ? "blue" : preenchimento ? "black" : "white";
 
             novaLinha.appendChild(novaColuna);
         }
 
         jogo.appendChild(novaLinha);
     }
+}
+
+function posicionaComida() {
+    return {linha: Math.floor(Math.random() * referenciaBaseAltura), coluna: Math.floor(Math.random() * referenciaBaseAltura)};
 }
