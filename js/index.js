@@ -163,7 +163,17 @@ function refresh() {
             novaColuna.style.lineHeight = "50px";
             novaColuna.style.textAlign = "center";
             novaColuna.style.border = "1px solid white";
-            novaColuna.style.backgroundColor = preenchimento === "comida" ? "blue" : preenchimento ? "black" : "white";
+
+            if (x === snake.coordenadas[0].idxLinha && y === snake.coordenadas[0].idxColuna) {
+                novaColuna.style.backgroundColor = "red";
+                novaColuna.style.borderRadius = "8px";
+            } else if (preenchimento === "comida") {
+                novaColuna.style.backgroundColor = "blue";
+            } else if (preenchimento) {
+                novaColuna.style.backgroundColor = "black";
+            } else {
+                novaColuna.style.backgroundColor = "white";
+            }
 
             novaLinha.appendChild(novaColuna);
         }
