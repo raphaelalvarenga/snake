@@ -87,7 +87,7 @@ function start() {
 
         console.log(`tempoMovimento = ${tempoMovimento}`)
 
-        if (comeu) aceleraTempo();
+        if (comeu) aceleraTempo("automatico");
     }, tempoMovimento);
 }
 
@@ -98,16 +98,10 @@ function gameOver() {
 }
 
 // Esta função muda a direção da cobra
-function mudaDirecao(direcao) {
-    const condicionais = [
-        direcao === "ArrowUp",
-        direcao === "ArrowDown",
-        direcao === "ArrowLeft",
-        direcao === "ArrowRight"
-    ]
+function mudaDirecao(tecla) {
     
-    if (condicionais.includes(true)) {
-        switch (direcao) {
+    if (tecla === "ArrowUp" || tecla === "ArrowDown" || tecla === "ArrowLeft" || tecla === "ArrowRight") {
+        switch (tecla) {
             case "ArrowUp":
                 if (snake.direcao !== "down") snake.direcao = "up";
                 break;
@@ -126,6 +120,18 @@ function mudaDirecao(direcao) {
 
             default: break;
         }
+
+        return "mudou direção";
+    }
+
+    if (tecla === "f") {
+        aceleraTempo("manual");
+        return "acelerou";
+    }
+
+    if (tecla === "s") {
+        desaceleraTempo();
+        return "desacelerou";
     }
 }
 
@@ -200,12 +206,40 @@ function posicionaComida() {
     return novaPosicao;
 }
 
-function aceleraTempo() {
-    if (tempoMovimento > 50) {
-        clearInterval(gameRunning);
-        tempoMovimento -= 10;
-        start();
+function aceleraTempo(tipo) {
+    if (tipo === "automatico") {
+        if (tempoMovimento > 50) {
+            clearInterval(gameRunning);
+            tempoMovimento -= 10;
+            start();
+        } else {
+            clearInterval(gameRunning);
+            tempoMovimento = 50;
+            start();
+        }
+    } else {
+        if (tempoMovimento > 50) {
+            clearInterval(gameRunning);
+            if (tempoMovimento < 100) {
+                tempoMovimento -= 10;
+            } else if (tempoMovimento < 200) {
+                tempoMovimento -= 50;
+            } else {
+                tempoMovimento -= 200;
+            }
+            start();
+        } else {
+            clearInterval(gameRunning);
+            tempoMovimento = 50;
+            start();
+        }
     }
+}
+
+function desaceleraTempo() {
+    clearInterval(gameRunning);
+    tempoMovimento += 100;
+    start();
 }
 
 start();
