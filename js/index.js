@@ -65,6 +65,10 @@ let gameRunning = setInterval(() => {
             
             default: break;
     }
+
+    // Se a posição que a cobra avançou pertence a uma posição que ela mesma está ocupando, então game over
+    const touchedItself = area[snake.coordenadas[0].idxLinha][snake.coordenadas[0].idxColuna] === true ? true : false;
+    if (touchedItself) gameOver();
         
     // Esta constante vai guardar o dado se a cobra comeu a comida
     const comeu = snake.coordenadas[0].idxLinha === comida.idxLinha && snake.coordenadas[0].idxColuna === comida.idxColuna ? true : false;
@@ -80,6 +84,7 @@ let gameRunning = setInterval(() => {
 
 // Caso o game termine
 function gameOver() {
+    alert("Game over!")
     clearInterval(gameRunning);
 }
 
@@ -148,6 +153,7 @@ function refresh() {
             novaColuna.style.height = "50px";
             novaColuna.style.lineHeight = "50px";
             novaColuna.style.textAlign = "center";
+            novaColuna.style.border = "1px solid white";
             novaColuna.style.backgroundColor = preenchimento === "comida" ? "blue" : preenchimento ? "black" : "white";
 
             novaLinha.appendChild(novaColuna);
