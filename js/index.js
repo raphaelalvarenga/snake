@@ -14,7 +14,7 @@ const body = document.getElementsByTagName("body")[0];
 body.addEventListener("keydown", (tecla) => mudaDirecao(tecla.key));
 
 // Esta é o tempo que cobra leva para se locomover. O nível de dificuldade aumenta se o valor diminui
-let tempoMovimento = 1000;
+let tempoMovimento = 300;
 
 // Este sera o vetor que guardará os quadros que aparecerão na tela
 let area = [];
@@ -35,8 +35,7 @@ let comida = posicionaComida();
 refresh();
 
 // A cobra se locomove com base nesta lógica
-// let gameRunning = setInterval(() => {
-function testando() {
+let gameRunning = setInterval(() => {
 
     // Se a cobra já comeu alguma comida, o lastro do caminho precisa ser guardado para os próximos quadros
     if (snake.coordenadas.length > 1) {
@@ -64,12 +63,9 @@ function testando() {
             snake.coordenadas[0].idxColuna === referenciaBaseAltura - 1 ? snake.coordenadas[0].idxColuna = 0 : ++snake.coordenadas[0].idxColuna;
             break;
             
-            default: console.log("caiu no break;");
+            default: break;
     }
         
-    console.log(snake.coordenadas);
-
-
     // Esta constante vai guardar o dado se a cobra comeu a comida
     const comeu = snake.coordenadas[0].idxLinha === comida.idxLinha && snake.coordenadas[0].idxColuna === comida.idxColuna ? true : false;
 
@@ -80,8 +76,7 @@ function testando() {
     };
 
     refresh();
-// }, tempoMovimento);
-}
+}, tempoMovimento);
 
 // Caso o game termine
 function gameOver() {
@@ -135,13 +130,15 @@ function refresh() {
         for (let y = 0; y < referenciaBaseAltura; y++) {
             let preenchimento;
 
-            if (x === comida.idxLinha && y === comida.idxColuna) {
-                preenchimento = "comida";
-            } else if (snake.coordenadas[0].idxLinha === x && snake.coordenadas[0].idxColuna === y) {
-                preenchimento = true;
-            } else {
-                preenchimento = false;
-            }
+            // Primeiramente, preenchimento ou será uma comida ou será false
+            preenchimento = x === comida.idxLinha && y === comida.idxColuna ? "comida" : false;
+
+            // Porém, se x e y baterem com as coordenadas da cobra, então preenchimento vira true
+            snake.coordenadas.map(coordenada => {
+                if (coordenada.idxLinha === x && coordenada.idxColuna === y) {
+                    preenchimento = true;
+                }
+            });
 
             area[x].push(preenchimento);
             
@@ -176,30 +173,4 @@ function posicionaComida() {
     while (isPreenchido);
 
     return novaPosicao;
-}
-
-function teste(botao) {
-    switch (botao) {
-        case "Cima":
-            snake.direcao = "up";
-            testando();
-            break;
-
-        case "Baixo":
-            snake.direcao = "down";
-            testando();
-            break;
-        case "Direita":
-            snake.direcao = "right";
-            testando();
-            break;
-        case "Esquerda":
-            snake.direcao = "left";
-            testando();
-            break;
-        case "Status":
-            console.log(snake);
-            console.log(area);
-            break;
-    }
 }
