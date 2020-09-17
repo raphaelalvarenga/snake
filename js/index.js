@@ -35,26 +35,39 @@ let comida = posicionaComida();
 refresh();
 
 // A cobra se locomove com base nesta lógica
-let gameRunning = setInterval(() => {
+// let gameRunning = setInterval(() => {
+function testando() {
+
+    // Se a cobra já comeu alguma comida, o lastro do caminho precisa ser guardado para os próximos quadros
+    if (snake.coordenadas.length > 1) {
+        for (let x = snake.coordenadas.length - 1; x >= 0; x--) {
+            if (x > 0) {
+                snake.coordenadas[x] = JSON.parse(JSON.stringify(snake.coordenadas[x - 1]));
+            }
+        }
+    }
+
     switch (snake.direcao) {
         case "up":
-            snake.coordenadas[0].idxLinha === 0 ? snake.coordenadas[0].idxLinha = referenciaBaseAltura - 1 : snake.coordenadas[0].idxLinha--;
+            snake.coordenadas[0].idxLinha === 0 ? snake.coordenadas[0].idxLinha = referenciaBaseAltura - 1 : --snake.coordenadas[0].idxLinha;
             break;
 
         case "down":
-            snake.coordenadas[0].idxLinha === referenciaBaseAltura - 1 ? snake.coordenadas[0].idxLinha = 0 : snake.coordenadas[0].idxLinha++;
+            snake.coordenadas[0].idxLinha === referenciaBaseAltura - 1 ? snake.coordenadas[0].idxLinha = 0 : ++snake.coordenadas[0].idxLinha;
             break;
 
         case "left":
-            snake.coordenadas[0].idxColuna === 0 ? snake.coordenadas[0].idxColuna = referenciaBaseAltura - 1 : snake.coordenadas[0].idxColuna--;
+            snake.coordenadas[0].idxColuna === 0 ? snake.coordenadas[0].idxColuna = referenciaBaseAltura - 1 : --snake.coordenadas[0].idxColuna;
             break;
 
         case "right":
-            snake.coordenadas[0].idxColuna === referenciaBaseAltura - 1 ? snake.coordenadas[0].idxColuna = 0 : snake.coordenadas[0].idxColuna++;
+            snake.coordenadas[0].idxColuna === referenciaBaseAltura - 1 ? snake.coordenadas[0].idxColuna = 0 : ++snake.coordenadas[0].idxColuna;
             break;
-
-        default: break;
+            
+            default: console.log("caiu no break;");
     }
+        
+    console.log(snake.coordenadas);
 
 
     // Esta constante vai guardar o dado se a cobra comeu a comida
@@ -67,7 +80,8 @@ let gameRunning = setInterval(() => {
     };
 
     refresh();
-}, tempoMovimento);
+// }, tempoMovimento);
+}
 
 // Caso o game termine
 function gameOver() {
@@ -162,4 +176,30 @@ function posicionaComida() {
     while (isPreenchido);
 
     return novaPosicao;
+}
+
+function teste(botao) {
+    switch (botao) {
+        case "Cima":
+            snake.direcao = "up";
+            testando();
+            break;
+
+        case "Baixo":
+            snake.direcao = "down";
+            testando();
+            break;
+        case "Direita":
+            snake.direcao = "right";
+            testando();
+            break;
+        case "Esquerda":
+            snake.direcao = "left";
+            testando();
+            break;
+        case "Status":
+            console.log(snake);
+            console.log(area);
+            break;
+    }
 }
