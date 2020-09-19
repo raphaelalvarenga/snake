@@ -85,8 +85,6 @@ function start() {
     
         refresh();
 
-        console.log(`tempoMovimento = ${tempoMovimento}`)
-
         if (comeu) aceleraTempo("automatico");
     }, tempoMovimento);
 }
@@ -197,7 +195,7 @@ function posicionaComida() {
         novaPosicao = {idxLinha: Math.floor(Math.random() * referenciaBaseAltura), idxColuna: Math.floor(Math.random() * referenciaBaseAltura)};
 
         isPreenchido = snake.coordenadas.some(coordenada => {
-            coordenada.idxLinha === novaPosicao.idxLinha && coordenada.idxColuna === novaPosicao.idxColuna
+            return coordenada.idxLinha === novaPosicao.idxLinha && coordenada.idxColuna === novaPosicao.idxColuna
         });
     }
     
